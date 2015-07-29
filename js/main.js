@@ -156,6 +156,28 @@ function solve() {
     });
 }
 
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function dragstart(ev) {
+    var style = window.getComputedStyle(ev.target, null);
+    console.log(style.getPropertyValue("left"));
+    ev.originalEvent.dataTransfer.setData("text",
+        (parseInt(style.getPropertyValue("left"),10) - ev.originalEvent.clientX) + ',' + (parseInt(style.getPropertyValue("top"),10) - ev.originalEvent.clientY));
+}
+
+function drop(ev) {
+    console.log(ev);
+    ev.preventDefault();
+    var data = document.getElementById("geekbox").style;
+    var offset = ev.originalEvent.dataTransfer.getData("text").split(",");
+    data.position = "fixed";
+    console.log(offset);
+    data.left = (ev.originalEvent.clientX  + parseInt(offset[0],10)) + "px";
+    data.top = (ev.originalEvent.clientY + parseInt(offset[1],10)) + "px";    
+}
+
 $(document).ready(function() {
     if (!isLoggedIn()) {
         //user is not logged in. Show button to login at the top
@@ -182,7 +204,7 @@ $(document).ready(function() {
         var getBack = "<span style='margin: 2px'>Get Back!</span><input id='getBack' name='getBack' type='checkbox'/>";
 
         $("body").append(topFixed);
-        $("body").append("<div id='geekbox'></div>");
+        $("body").append("<div id='geekbox' class='pull-right' draggable='true'></div>");
         $("#geekbox").append(solveIt).append(gotIt).append(getBack);
 
         $(document).on('click', '#solve', function () {
@@ -196,6 +218,14 @@ $(document).ready(function() {
         $(document).on('click', '#getBack', function () {
             markGetBack();
         });
+
+        //Code to make the console movable
+        $("body").on("dragover", allowDrop);
+
+        $(document).on("dragstart", "#geekbox", dragstart);
+        
+        $("body").on("drop", drop);
+        //end code to make console movable
 
         if (!(url == pat1) && !(url == pat3) && !(url.search(pat2) >= 0) && !(url.search(pat4) >= 0)) {
             isQuestionGotIt(url, function(data) {
