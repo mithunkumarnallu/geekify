@@ -12,8 +12,8 @@
     padding: 5px 10px;
     height:auto;
     position:fixed;
-    top:2%;
-    right:0%;
+    top:10px;
+    left:75%;
     z-index:9999;
     color: black;
     border-radius: 3px;
